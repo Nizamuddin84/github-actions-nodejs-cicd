@@ -60,3 +60,25 @@ jobs:
         run: |
           docker tag nodejs-cicd-app:latest nizamuddin112/nodejs-cicd-app:latest
           docker push nizamuddin112/nodejs-cicd-app:latest
+  deploy:
+    name: Deploy to EC2
+    needs: build-and-test
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy application on EC2
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            sudo docker pull nizamuddin112/nodejs-cicd-app:latest
+            sudo docker stop nodejs-cicd-app || true
+            sudo docker rm nodejs-cicd-app || true
+            sudo docker run -d \
+              --name nodejs-cicd-app \
+              --restart unless-stopped \
+              -p 80:3000 \
+              nizamuddin112/nodejs-cicd-app:latest
