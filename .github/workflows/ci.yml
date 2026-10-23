@@ -58,5 +58,5 @@ jobs:
       - name: Push image to Docker Hub
         if: github.event_name != 'pull_request'
         run: |
-          docker tag nodejs-cicd-app:latest nizamuddin112/nodejs-cicd-app:latest"
-          docker push nizamuddin112/nodejs-cicd-app:latest"
+          docker tag nodejs-cicd-app:latest nizamuddin112/nodejs-cicd-app:latest
+          docker push nizamuddin112/nodejs-cicd-app:latest
